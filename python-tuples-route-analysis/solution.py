@@ -28,42 +28,51 @@ def analyze_route(points: list) -> tuple:
 
     `points` and its tuples must not be modified.
     """
-    if len(points) == 0:
+    n = len(points)
+
+    if n == 0:
         return ({}, None, 0, 0, 0)
 
-    visit_count = {}
-    for point in points:
-        if point in visit_count:
-            visit_count[point] += 1
-        else: 
-            visit_count[point] = 1
+    if n == 1:
+        pt = points[0]
+        return ({pt: 1}, (pt, pt), 0, 0, 0)
 
-    min_x = min_y = max_x = max_y = None
+    visit_counts = {}
+    min_x, min_y = points[0]
+    max_x, max_y = points[0]
+
     for x, y in points:
-        if min_x is None or x < min_x:
+        if (x, y) in visit_counts:
+            visit_counts[(x, y)] += 1
+        else:
+            visit_counts[(x, y)] = 1
+
+        if x < min_x:
             min_x = x
-        if min_y is None or y < min_y:
-            min_y = y
-        if max_x is None or x > max_x:
+        if x > max_x:
             max_x = x
-        if max_y is None or y > max_y:
+        if y < min_y:
+            min_y = y
+        if y > max_y:
             max_y = y
+
     bounding_box = ((min_x, min_y), (max_x, max_y))
 
     path_length = 0
-    for i in range(len(points)-1):
+    for i in range(n - 1):
         x1, y1 = points[i]
         x2, y2 = points[i + 1]
-        path_length += abs(x2 - x1) + abs(y2 - y1)
+        path_length += abs(x1 - x2) + abs(y1 - y2)
 
-    if len(points) == 1:
-        net_displacement = 0
-    else:
-        first, *_, last = points
-        x1, y1 = first
-        x2, y2 = last
-        net_displacement = abs(x2 - x1) + abs(y2 - y1)
+    first, *_, last = points
+    net_displacement = abs(first[0] - last[0]) + abs(first[1] - last[1])
 
-    revist_count = len(points) - len(visit_count)
+    revisit_count = n - len(visit_counts)
 
-    return (visit_count, bounding_box, path_length, net_displacement, revist_count)
+    return (
+        visit_counts,
+        bounding_box,
+        path_length,
+        net_displacement,
+        revisit_count,
+    )
