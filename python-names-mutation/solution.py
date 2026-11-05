@@ -1,0 +1,76 @@
+def mutate_list(lst: list) -> None:
+    """
+    Mutate `lst` in place by appending the value 4 to it.
+    Do not reassign lst to a new object. Return nothing.
+    """
+    lst.append(4)
+
+
+def reassign_list(lst: list) -> list:
+    """
+    Create a brand-new list [9, 9, 9] and return it, without
+    mutating the original `lst` in any way.
+    """
+    return [9, 9, 9]
+
+
+def observe_through_alias(original: list) -> dict:
+    """
+    Inside this function:
+      1. Create `alias = original` (a second variable pointing
+         at the same object).
+      2. Mutate `original` by appending 100 to it.
+      3. Reassign `original` to a brand-new list [0, 0, 0]
+         (do not mutate this new list into alias's object).
+
+    Return a dictionary:
+      {
+        "alias_after_mutation": <contents of alias right after step 2>,
+        "alias_after_reassignment": <contents of alias right after step 3>,
+        "original_final": <contents of original at the end>
+      }
+    """
+    alias = original
+    original.append(100)
+    alias_after_mutation = list(alias)
+    original = [0, 0, 0]
+    alias_after_reassignment = list(alias)
+    return {
+        "alias_after_mutation": alias_after_mutation,
+        "alias_after_reassignment": alias_after_reassignment,
+        "original_final": original
+      }
+
+_IMMUTABLE_TYPES = (int, float, bool, str, tuple, frozenset)
+
+def is_mutable_type(value) -> bool:
+    """
+    Return True if the type of `value` is mutable (list, dict,
+    set, or a typical custom object instance), False if it's
+    immutable (int, float, bool, str, tuple, frozenset).
+    """
+    return not isinstance(value, _IMMUTABLE_TYPES)
+
+
+def tuple_inner_mutation_check(t: tuple) -> dict:
+    """
+    Given a tuple `t` whose first element is a list, mutate that
+    inner list by appending the value 100 to it. Do NOT attempt
+    to reassign any slot of the tuple itself.
+
+    Return a dictionary:
+      {
+        "tuple_id_before": <id of t before mutation>,
+        "tuple_id_after": <id of t after mutation>,
+        "inner_list_after": <contents of t[0] after mutation>
+      }
+    tuple_id_before and tuple_id_after should be equal, since the
+    tuple itself was never reassigned.
+    """
+    tuple_id_before = id(t)
+    t[0].append(100)
+    return {
+        "tuple_id_before": tuple_id_before,
+        "tuple_id_after": id(t),
+        "inner_list_after": list(t[0]),
+      }
